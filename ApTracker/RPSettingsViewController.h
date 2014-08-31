@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RPSettingsViewController : UIViewController
+//Keys for NSUserDefaults dictionary
+extern NSString * const kRPSettingsNickKey;
+extern NSString * const kRPSettingsHostKey;
+extern NSString * const kRPSettingsPortKey;
+
+@interface RPSettingsViewController : UIViewController <UITextFieldDelegate>
 
 @end
