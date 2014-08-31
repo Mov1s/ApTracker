@@ -156,7 +156,14 @@
                             <constraint firstAttribute="centerX" secondItem="SdK-2H-PxS" secondAttribute="centerX" id="wcN-8j-4Nc"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="AP Tracker" id="3Gd-cq-Iok"/>
+                    <navigationItem key="navigationItem" title="AP Tracker" id="3Gd-cq-Iok">
+                        <barButtonItem key="rightBarButtonItem" title="Settings" id="cvu-lK-lzM">
+                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <connections>
+                                <segue destination="raW-OV-con" kind="push" identifier="settingsSegue" id="28K-NO-RSg"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="currentApTimeLabel" destination="Dds-1k-4og" id="fEh-ur-fBA"/>
                         <outlet property="loadingActivityIndicator" destination="SdK-2H-PxS" id="ysx-rG-M2K"/>
@@ -165,17 +172,16 @@
                         <outlet property="statsContainerView" destination="C0d-4O-YmJ" id="F0v-3C-Qnz"/>
                         <outlet property="totalApLabel" destination="pWB-iO-V50" id="21V-L1-CkY"/>
                         <outlet property="totalTimeLabel" destination="aL6-W3-eHA" id="HPC-gW-tWS"/>
-                        <segue destination="raW-OV-con" kind="push" identifier="settingsSegue" id="UII-Ac-Svx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vbW-rE-UGj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="158" y="114"/>
         </scene>
-        <!--View Controller-->
+        <!--Settings View Controller - Settings-->
         <scene sceneID="Rp7-zf-YMS">
             <objects>
-                <viewController id="raW-OV-con" sceneMemberID="viewController">
+                <viewController id="raW-OV-con" customClass="RPSettingsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gWe-m4-9Df"/>
                         <viewControllerLayoutGuide type="bottom" id="tPp-qu-KTX"/>
@@ -183,9 +189,50 @@
                     <view key="view" contentMode="scaleToFill" id="Pe2-Oq-0b2">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Qlm-at-YKm">
+                                <rect key="frame" x="74" y="95" width="226" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lKF-TM-5Eo">
+                                <rect key="frame" x="74" y="137" width="226" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ehy-Pr-YJP">
+                                <rect key="frame" x="74" y="180" width="226" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Nick" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bbu-k9-XVr">
+                                <rect key="frame" x="20" y="99" width="35" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Host" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JNP-DM-1YV">
+                                <rect key="frame" x="20" y="141" width="37" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Port" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wNe-G8-XYY">
+                                <rect key="frame" x="20" y="184" width="33" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.23367442259999999" green="0.23367442259999999" blue="0.23367442259999999" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
-                    <navigationItem key="navigationItem" id="EeI-XQ-LLi"/>
+                    <navigationItem key="navigationItem" title="Settings" id="EeI-XQ-LLi"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bwa-Zo-4w0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
