@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Ryan Popa. All rights reserved.
 //
 
+#import "RPSettingsViewController.h"
 #import "RPTrackingManager.h"
 #import <AFNetworking/AFNetworking.h>
 
@@ -55,9 +56,15 @@ static RPTrackingManager *trackingManagerSharedInstance = nil;
 //Get AP stats
 - (void)getStatsWithCallback: (SEL)callback sender: (id)sender;
 {
+    //Construct URI
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *baseUrl = [defaults objectForKey: kRPSettingsHostKey];
+    NSString *port = [defaults objectForKey: kRPSettingsPortKey];
+    NSString *user = [defaults objectForKey: kRPSettingsNickKey];
+    NSString *path = [NSString stringWithFormat: @"%@:%@/%@/%@", baseUrl, port, @"stats", user];
     
     //Request
-    [self.sharedManager GET: nil
+    [self.sharedManager GET: path
                  parameters: nil
                     success: ^(AFHTTPRequestOperation *operation, id responseObject) {
                         @try
