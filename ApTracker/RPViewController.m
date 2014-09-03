@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Ryan Popa. All rights reserved.
 //
 
+#import "RPSettingsViewController.h"
 #import "RPTrackingManager.h"
 #import "RPViewController.h"
 #import "UIView+AnimationHelper.h"
@@ -17,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *currentApTimeLabel;
 @property (weak, nonatomic) IBOutlet UIView *statsContainerView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
+@property (weak, nonatomic) IBOutlet UIButton *trackButton;
 
 //Constraint Outlets
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *statsContainerTopConstraint;
@@ -33,8 +35,17 @@
 {
     [super viewDidLoad];
     
+    //Style the track button
+    self.trackButton.titleLabel.font = [UIFont fontWithName: @"Open Sans Regular" size: 42];
+    self.trackButton.layer.borderColor = [[UIColor yellowColor] CGColor];
+    self.trackButton.layer.borderWidth = 2.0;
+    self.trackButton.layer.cornerRadius = 7.0;
+    
     //Attempt to get user stats
     [[RPTrackingManager sharedInstance] getStatsWithCallback: @selector(getStatsCallbackSuccess:withError:) sender: self];
+    
+    //Hide the back button
+    self.navigationItem.hidesBackButton = YES;
     
     //Start the stats container hidden
     self.statsContainerView.alpha = 0.0;
@@ -68,20 +79,28 @@
             [self.statsContainerView fadeIn];
         }];
         
-        [self.view layoutIfNeeded];
-        [UIView animateWithDuration: 13 animations:^{
-            self.statsContainerTopConstraint.constant -= 128;
-            self.statsContainerBottomConstraint.constant += 128;
-            [self.view layoutIfNeeded];
-        }];
+//        [self.view layoutIfNeeded];
+//        [UIView animateWithDuration: 13 animations:^{
+//            self.statsContainerTopConstraint.constant -= 128;
+//            self.statsContainerBottomConstraint.constant += 128;
+//            [self.view layoutIfNeeded];
+//        }];
     }
-   
+    
     //If there was an error show message
     else
     {
         [self displayAlertFromError: error];
         [self.loadingActivityIndicator fadeOut];
     }
+}
+
+#pragma mark - Actions
+//Action for pressing the settings button
+//Pops the view stack bringing the user to settings
+- (IBAction)settingsAction: (UIBarButtonItem *)sender
+{
+    [self.navigationController popViewControllerAnimated: YES];
 }
 
 #pragma mark - Timer Helpers
