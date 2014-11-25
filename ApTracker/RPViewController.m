@@ -68,10 +68,8 @@
         //If the user is currently drinking an ap start the current timer
         if (stats.isCurrentlyDrinking)
         {
-//            NSDate *apStartTime = [self apTimerStartDateFromHours: statsDict[kRPStatsResponseCurrentHoursKey]
-//                                                          minutes: statsDict[kRPStatsResponseCurrentlMinKey]
-//                                                          seconds: statsDict[kRPStatsResponseCurrentSecKey]];
-//            [self startApTimerWithStartDate: apStartTime];
+            NSDate *apStartTime = [self apTimerStartDateFromTimeInterval: [stats.currentTime doubleValue]];
+            [self startApTimerWithStartDate: apStartTime];
             
             //Fade out the message and fade in the current AP time
             [self.currentApNoneLabel fadeOutWithCompletion:^(BOOL finished) {
@@ -111,14 +109,9 @@
 #pragma mark - Timer Helpers
 //Create a date representing the time an AP was started based on how long it has been in progress
 //Pass in the hours, minutes and seconds that it has been in progress and it calculates when it began
-- (NSDate *)apTimerStartDateFromHours: (NSNumber *)hours minutes: (NSNumber *)minutes seconds: (NSNumber *)seconds
+- (NSDate *)apTimerStartDateFromTimeInterval: (NSTimeInterval)timeInterval
 {
-    NSCalendar *cal = [NSCalendar currentCalendar];
-    NSDateComponents *components = [cal components: NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate: [NSDate date]];
-    components.hour -= [hours integerValue];
-    components.minute -= [minutes integerValue];
-    components.second -= [seconds integerValue];
-    return [cal dateFromComponents: components];
+    return [NSDate dateWithTimeIntervalSinceNow: -timeInterval];
 }
 
 //Starts a timer to keep track of current run time of an AP
@@ -129,14 +122,14 @@
     
     //Start the timer
     self.apDrinkTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(timerCallback:) userInfo: nil repeats: YES];
+    [self timerCallback: self.apDrinkTimer];
 }
 
 //Gets called every second when the drink timer is active
 //Updates the now drinking label
 - (void)timerCallback: (NSTimer *)timer
 {
-    NSDate *currentDate = [NSDate date];
-    NSTimeInterval interval = [currentDate timeIntervalSinceDate: self.apStartDate];
+    NSTimeInterval interval = -[self.apStartDate timeIntervalSinceNow];
     self.currentApTimeLabel.text = [self timeStringInHoursFromTimeInterval: interval];
 }
 

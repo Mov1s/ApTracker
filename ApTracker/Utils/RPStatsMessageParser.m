@@ -49,13 +49,13 @@ typedef NS_ENUM(NSInteger, RPStatsMessageIndex)
     NSError *error;
     
     //Create a regex for parsing the numbers out of a message
-    self.regex = [NSRegularExpression regularExpressionWithPattern: @"[123456789]+" options: NSRegularExpressionCaseInsensitive error: &error];
+    self.regex = [NSRegularExpression regularExpressionWithPattern: @"[1234567890]+" options: NSRegularExpressionCaseInsensitive error: &error];
     if (error) return error;
     
     //Find all number ranges in the message
     NSArray *regexMatches = [self.regex matchesInString: self.message options: NSMatchingReportCompletion range: NSMakeRange(0, [self.message length])];
     NSArray *numberRanges = [regexMatches valueForKey: @"range"];
-    if (numberRanges.count != 5 && numberRanges.count != 8) return [NSError errorWithDomain: @"com.rp.errors" code: 0 userInfo: nil];
+    if (numberRanges.count != 5 && numberRanges.count != 9) return [NSError errorWithDomain: @"com.rp.errors" code: 0 userInfo: nil];
     self.messageNumberRanges = numberRanges;
     
     //Write the parsed values
