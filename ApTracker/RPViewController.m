@@ -19,10 +19,11 @@
 @property (weak, nonatomic) IBOutlet UIView *statsContainerView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
 @property (weak, nonatomic) IBOutlet UIButton *trackButton;
+@property (weak, nonatomic) IBOutlet UIView *totalCountContainer;
 
 //Constraint Outlets
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *statsContainerTopConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *statsContainerBottomConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *totalCountTopConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *totalHeightConstraint;
 
 //Properties
 @property (strong, nonatomic) NSDate *apStartDate;

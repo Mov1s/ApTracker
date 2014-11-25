@@ -26,6 +26,7 @@
 	<true/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Lato-Regular.ttf</string>
 		<string>OpenSans-Semibold.ttf</string>
 		<string>OpenSans-Bold.ttf</string>
 		<string>OpenSans-Regular.ttf</string>
