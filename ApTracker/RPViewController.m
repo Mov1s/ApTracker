@@ -18,12 +18,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *currentApTimeLabel;
 @property (weak, nonatomic) IBOutlet UIView *statsContainerView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
+@property (weak, nonatomic) IBOutlet UIView *currentApTimeContainer;
+@property (weak, nonatomic) IBOutlet UILabel *currentApNoneLabel;
 @property (weak, nonatomic) IBOutlet UIButton *trackButton;
-@property (weak, nonatomic) IBOutlet UIView *totalCountContainer;
-
-//Constraint Outlets
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *totalCountTopConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *totalHeightConstraint;
 
 //Properties
 @property (strong, nonatomic) NSDate *apStartDate;
@@ -36,12 +33,6 @@
 {
     [super viewDidLoad];
     
-    //Style the track button
-    self.trackButton.titleLabel.font = [UIFont fontWithName: @"Open Sans Regular" size: 42];
-    self.trackButton.layer.borderColor = [[UIColor yellowColor] CGColor];
-    self.trackButton.layer.borderWidth = 2.0;
-    self.trackButton.layer.cornerRadius = 7.0;
-    
     //Attempt to get user stats
     [[RPTrackingManager sharedInstance] getStatsWithCallback: @selector(getStatsCallbackSuccess:withError:) sender: self];
     
@@ -50,6 +41,9 @@
     
     //Start the stats container hidden
     self.statsContainerView.alpha = 0.0;
+    
+    //Start the current AP time hidden
+    self.currentApTimeContainer.alpha = 0.0;
 }
 
 #pragma mark - Callbacks
@@ -62,9 +56,10 @@
     {
         //Populate the labels with the user's AP stats
         self.totalApLabel.text = [statsDict[kRPStatsResponseTotalKey] stringValue];
-        self.totalTimeLabel.attributedText = [self formatedTimeStringFromDays: statsDict[kRPStatsResponseTotalDaysKey]
-                                                                        hours: statsDict[kRPStatsResponseTotalHoursKey]
-                                                                      minutes: statsDict[kRPStatsResponseTotalMinKey]];
+        
+        //Populate the total time label
+        NSString *totalTimeString = [self timeStringInDaysFromTimeInterval: 4560];
+        self.totalTimeLabel.text = [NSString stringWithFormat: @"%@ days", totalTimeString];
 
         //If the user is currently drinking an ap start the current timer
         if ([statsDict[kRPStatsResponseIsDrinkingKey] boolValue])
@@ -73,19 +68,24 @@
                                                           minutes: statsDict[kRPStatsResponseCurrentlMinKey]
                                                           seconds: statsDict[kRPStatsResponseCurrentSecKey]];
             [self startApTimerWithStartDate: apStartTime];
+            
+            //Fade out the message and fade in the current AP time
+            [self.currentApNoneLabel fadeOutWithCompletion:^(BOOL finished) {
+                [self.currentApTimeContainer fadeIn];
+            }];
+        }
+        else
+        {
+            //Fade out the current time and fade in the no ap message
+            [self.currentApTimeContainer fadeOutWithCompletion:^(BOOL finished) {
+                [self.currentApNoneLabel fadeIn];
+            }];
         }
         
         //Fade the activity spinner out and replace it with the stats labels
         [self.loadingActivityIndicator fadeOutWithCompletion: ^(BOOL finished) {
             [self.statsContainerView fadeIn];
         }];
-        
-//        [self.view layoutIfNeeded];
-//        [UIView animateWithDuration: 13 animations:^{
-//            self.statsContainerTopConstraint.constant -= 128;
-//            self.statsContainerBottomConstraint.constant += 128;
-//            [self.view layoutIfNeeded];
-//        }];
     }
     
     //If there was an error show message
@@ -133,30 +133,25 @@
 {
     NSDate *currentDate = [NSDate date];
     NSTimeInterval interval = [currentDate timeIntervalSinceDate: self.apStartDate];
-    NSLog(@"%f", interval);
+    self.currentApTimeLabel.text = [self timeStringInHoursFromTimeInterval: interval];
 }
 
 #pragma mark - Helpers
-//Formats days, hours, mins into an NSAttributed string
-- (NSAttributedString *)formatedTimeStringFromDays: (NSNumber *)days hours: (NSNumber *)hours minutes: (NSNumber *)minutes
+
+- (NSString *)timeStringInDaysFromTimeInterval: (NSTimeInterval)timeInterval
 {
-    //Construct the formated time string
-    NSString *timeString = [NSString stringWithFormat: @"%@ days %@ hours %@ min", days, hours, minutes];
-    
-    //Adjust the starting point and length of the values in the string depending on the length of the individual parts
-    int daysLength = [[days stringValue] length];
-    int hoursStart = 6 + daysLength;
-    int hoursLength = [[hours stringValue] length];
-    int minStart = 13 + daysLength + hoursLength;
-    int minLength = [[minutes stringValue] length];
-    
-    //Make the numbers large than the other text
-    NSMutableAttributedString *attributedTimeString = [[NSMutableAttributedString alloc] initWithString: timeString];
-    [attributedTimeString addAttribute: NSFontAttributeName value: [UIFont systemFontOfSize: 42.0] range: NSMakeRange(0, daysLength)];
-    [attributedTimeString addAttribute: NSFontAttributeName value: [UIFont systemFontOfSize: 42.0] range: NSMakeRange(hoursStart, hoursLength)];
-    [attributedTimeString addAttribute: NSFontAttributeName value: [UIFont systemFontOfSize: 42.0] range: NSMakeRange(minStart, minLength)];
-    
-    return attributedTimeString;
+    int days = timeInterval / 86400;
+    int hours = fmod(timeInterval, 86400) / 3600;
+    int mins = fmod(timeInterval, 3600) / 60;
+    return [NSString stringWithFormat: @"%02d:%02d:%02d", days, hours, mins];
+}
+
+- (NSString *)timeStringInHoursFromTimeInterval: (NSTimeInterval)timeInterval
+{
+    int hours = timeInterval / 3600;
+    int mins = fmod(timeInterval, 3600) / 60;
+    int secs = fmod(timeInterval, 60);
+    return [NSString stringWithFormat: @"%02d:%02d:%02d", hours, mins, secs];
 }
 
 //Shows an error message alert

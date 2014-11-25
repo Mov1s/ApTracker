@@ -3,9 +3,11 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <customFonts key="customFonts">
         <mutableArray key="Lato-Regular.ttf">
+            <string>Lato-Regular</string>
             <string>Lato-Regular</string>
             <string>Lato-Regular</string>
             <string>Lato-Regular</string>
@@ -110,6 +112,15 @@
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                             </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You haven't started drinking an AP" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7P2-r4-zCA">
+                                                <rect key="frame" x="8" y="162" width="304" height="21"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="21" id="iwI-lD-TeD"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" red="0.37647058823529411" green="0.40000000000000002" blue="0.45098039215686275" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -118,7 +129,10 @@
                                             <constraint firstAttribute="bottom" secondItem="xb6-Bj-mHF" secondAttribute="bottom" constant="8" id="E6h-ew-eob"/>
                                             <constraint firstAttribute="centerY" secondItem="cVQ-2r-62I" secondAttribute="centerY" id="EJs-UN-8Vt"/>
                                             <constraint firstItem="gtC-Od-fk8" firstAttribute="top" secondItem="Uul-wb-JXT" secondAttribute="top" constant="10" id="Fi6-a2-IXo"/>
+                                            <constraint firstAttribute="centerY" secondItem="7P2-r4-zCA" secondAttribute="centerY" id="Iwb-hR-aMV"/>
                                             <constraint firstItem="gtC-Od-fk8" firstAttribute="leading" secondItem="Uul-wb-JXT" secondAttribute="leading" constant="8" id="bId-Ob-rnw"/>
+                                            <constraint firstItem="7P2-r4-zCA" firstAttribute="leading" secondItem="Uul-wb-JXT" secondAttribute="leadingMargin" id="g7g-SU-h52"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="7P2-r4-zCA" secondAttribute="trailing" id="gDp-pU-Tv5"/>
                                             <constraint firstAttribute="centerX" secondItem="xb6-Bj-mHF" secondAttribute="centerX" id="nY0-SR-Jwz"/>
                                         </constraints>
                                     </view>
@@ -258,11 +272,14 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="currentApNoneLabel" destination="7P2-r4-zCA" id="zNN-vB-WBO"/>
+                        <outlet property="currentApTimeContainer" destination="cVQ-2r-62I" id="qYX-ts-5tf"/>
+                        <outlet property="currentApTimeLabel" destination="X7E-CG-Nv2" id="vc9-E2-RhE"/>
                         <outlet property="loadingActivityIndicator" destination="SdK-2H-PxS" id="ysx-rG-M2K"/>
                         <outlet property="statsContainerView" destination="C0d-4O-YmJ" id="F0v-3C-Qnz"/>
                         <outlet property="totalApLabel" destination="mSN-Tr-Z5Q" id="mcS-ht-oYm"/>
-                        <outlet property="totalCountContainer" destination="Uul-wb-JXT" id="1il-Ee-tev"/>
-                        <outlet property="totalCountTopConstraint" destination="940-nR-e56" id="hEg-Le-cSe"/>
+                        <outlet property="totalTimeLabel" destination="rAG-uh-Y2v" id="qm9-YY-QGs"/>
+                        <outlet property="trackButton" destination="xb6-Bj-mHF" id="u5L-mE-rfJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vbW-rE-UGj" userLabel="First Responder" sceneMemberID="firstResponder"/>
