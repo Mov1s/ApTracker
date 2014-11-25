@@ -7,6 +7,7 @@
 //
 
 #import "RPSettingsViewController.h"
+#import "RPStats.h"
 #import "RPTrackingManager.h"
 #import "RPViewController.h"
 #import "UIView+AnimationHelper.h"
@@ -49,25 +50,28 @@
 #pragma mark - Callbacks
 //Callback for stats
 //Populates the labels with AP stats
-- (void)getStatsCallbackSuccess: (id)statsDict withError: (NSError *)error
+- (void)getStatsCallbackSuccess: (id)statsObject withError: (NSError *)error
 {
     //If there was no error update the stats labels
     if (!error)
     {
+        RPStats *stats = statsObject;
+        
         //Populate the labels with the user's AP stats
-        self.totalApLabel.text = [statsDict[kRPStatsResponseTotalKey] stringValue];
+        self.totalApLabel.text = [stats.totalCount stringValue];
         
         //Populate the total time label
-        NSString *totalTimeString = [self timeStringInDaysFromTimeInterval: 4560];
+        NSTimeInterval totalTimeInterval = [stats.totalTime doubleValue];
+        NSString *totalTimeString = [self timeStringInDaysFromTimeInterval: totalTimeInterval];
         self.totalTimeLabel.text = [NSString stringWithFormat: @"%@ days", totalTimeString];
 
         //If the user is currently drinking an ap start the current timer
-        if ([statsDict[kRPStatsResponseIsDrinkingKey] boolValue])
+        if (stats.isCurrentlyDrinking)
         {
-            NSDate *apStartTime = [self apTimerStartDateFromHours: statsDict[kRPStatsResponseCurrentHoursKey]
-                                                          minutes: statsDict[kRPStatsResponseCurrentlMinKey]
-                                                          seconds: statsDict[kRPStatsResponseCurrentSecKey]];
-            [self startApTimerWithStartDate: apStartTime];
+//            NSDate *apStartTime = [self apTimerStartDateFromHours: statsDict[kRPStatsResponseCurrentHoursKey]
+//                                                          minutes: statsDict[kRPStatsResponseCurrentlMinKey]
+//                                                          seconds: statsDict[kRPStatsResponseCurrentSecKey]];
+//            [self startApTimerWithStartDate: apStartTime];
             
             //Fade out the message and fade in the current AP time
             [self.currentApNoneLabel fadeOutWithCompletion:^(BOOL finished) {

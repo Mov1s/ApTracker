@@ -8,16 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-//Keys for stats dictionary
-extern NSString * const kRPStatsResponseTotalKey;
-extern NSString * const kRPStatsResponseTotalDaysKey;
-extern NSString * const kRPStatsResponseTotalHoursKey;
-extern NSString * const kRPStatsResponseTotalMinKey;
-extern NSString * const kRPStatsResponseIsDrinkingKey;
-extern NSString * const kRPStatsResponseCurrentHoursKey;
-extern NSString * const kRPStatsResponseCurrentlMinKey;
-extern NSString * const kRPStatsResponseCurrentSecKey;
-
 @interface RPTrackingManager : NSObject
 
 /** Returns a shared instance of the manager for use as a singleton */
