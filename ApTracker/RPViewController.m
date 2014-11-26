@@ -64,9 +64,11 @@
         NSTimeInterval timeDrinkingCurrentAp = [statsObject.currentTime doubleValue];
         [self.currentApTimer startFromElapsedTime: timeDrinkingCurrentAp];
     }
-    self.currentApTimeVisibilityController.shouldShowView = statsObject.isCurrentlyDrinking;
+    else
+        [self.currentApTimer stop];
     
     //Fade the activity spinner out and replace it with the stats labels
+    self.currentApTimeVisibilityController.shouldShowView = statsObject.isCurrentlyDrinking;
     [self.refreshActivityIndicatorVisibilityController hideView];
 }
 
