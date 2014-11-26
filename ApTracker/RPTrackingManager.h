@@ -16,4 +16,10 @@
 /** Get AP stats */
 - (void)getStatsWithCallback: (SEL)callback sender: (id)sender;
 
+/** Start drinking an AP */
+- (void)startApWithCallback: (SEL)callback sender: (id)sender;
+
+/** Stop drinking an AP */
+- (void)stopApWithCallback: (SEL)callback sender: (id)sender;
+
 @end

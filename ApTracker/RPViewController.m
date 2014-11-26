@@ -67,6 +67,9 @@
     else
         [self.currentApTimer stop];
     
+    //Set the track button text
+    [self.trackButton setTitle: statsObject.isCurrentlyDrinking ? @"Stop" : @"Start" forState: UIControlStateNormal];
+    
     //Fade the activity spinner out and replace it with the stats labels
     self.currentApTimeVisibilityController.shouldShowView = statsObject.isCurrentlyDrinking;
     [self.refreshActivityIndicatorVisibilityController hideView];
@@ -86,6 +89,22 @@
 - (IBAction)settingsAction: (UIBarButtonItem *)sender
 {
     [self.navigationController popViewControllerAnimated: YES];
+}
+
+//Action for pressing the start/stop tracking button
+//Makes start/stop request
+- (IBAction)trackingStartStopAction: (UIButton *)sender
+{
+    //Start the refresh spinner
+    [self.refreshActivityIndicatorVisibilityController showView];
+    
+    //Stop tracking the AP
+    if ([sender.titleLabel.text isEqualToString: @"Stop"])
+        [[RPTrackingManager sharedInstance] stopApWithCallback: @selector(getStatsCallbackSuccess:withError:) sender: self];
+    
+    //Start trackin an AP
+    else
+        [[RPTrackingManager sharedInstance] startApWithCallback: @selector(getStatsCallbackSuccess:withError:) sender: self];
 }
 
 #pragma mark - Helpers
