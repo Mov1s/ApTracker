@@ -23,7 +23,7 @@
     
     //Fade one view out and another in
     [viewToHide fadeOutWithCompletion: ^(BOOL finished) {
-        [viewToShow fadeIn];
+        if (finished) [viewToShow fadeIn];
     }];
 }
 
