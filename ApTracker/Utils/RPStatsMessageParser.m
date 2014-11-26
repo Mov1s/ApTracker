@@ -10,14 +10,17 @@
 
 typedef NS_ENUM(NSInteger, RPStatsMessageIndex)
 {
-    RPStatsMessageIndexTotal,
-    RPStatsMessageIndexTotalTimeDays,
-    RPStatsMessageIndexTotalTimeHours,
-    RPStatsMessageIndexTotalTimeMins,
-    RPStatsMessageIndexTotalTimeSecs,
-    RPStatsMessageIndexCurrentTimeHours,
-    RPStatsMessageIndexCurrentTimeMins,
-    RPStatsMessageIndexCurrentTimeSecs
+    RPStatsMessageTotalIndex,
+    RPStatsMessageTotalTimeIndex,
+    RPStatsMessageCurrentTimeIndex,
+};
+
+typedef NS_ENUM(NSInteger, RPStatsMessageTimeComponentIndex)
+{
+    RPStatsMessageTimeComponentIndexDays,
+    RPStatsMessageTimeComponentIndexHours,
+    RPStatsMessageTimeComponentIndexMins,
+    RPStatsMessageTimeComponentIndexSecs,
 };
 
 @interface RPStatsMessageParser()
@@ -46,42 +49,69 @@ typedef NS_ENUM(NSInteger, RPStatsMessageIndex)
 //Parse the message
 - (NSError *)parse
 {
+    //If the message is for a brand new user initizalize all values to zero
+    if ([self.message isEqualToString: @"Nothing to report"])
+    {
+        [self initWithZeros];
+        return nil;
+    }
+    
     NSError *error;
     
     //Create a regex for parsing the numbers out of a message
-    self.regex = [NSRegularExpression regularExpressionWithPattern: @"[1234567890]+" options: NSRegularExpressionCaseInsensitive error: &error];
+    self.regex = [NSRegularExpression regularExpressionWithPattern: @"[1234567890:]+" options: NSRegularExpressionCaseInsensitive error: &error];
     if (error) return error;
     
     //Find all number ranges in the message
     NSArray *regexMatches = [self.regex matchesInString: self.message options: NSMatchingReportCompletion range: NSMakeRange(0, [self.message length])];
     NSArray *numberRanges = [regexMatches valueForKey: @"range"];
-    if (numberRanges.count != 5 && numberRanges.count != 9) return [NSError errorWithDomain: @"com.rp.errors" code: 0 userInfo: nil];
+    if (numberRanges.count != 2 && numberRanges.count != 4) return [NSError errorWithDomain: @"com.rp.errors" code: 0 userInfo: nil];
     self.messageNumberRanges = numberRanges;
     
     //Write the parsed values
-    _totalNumberOfAps = [self numberForMessageRangeIndex: RPStatsMessageIndexTotal];
-    _totalApTimeDays = [self numberForMessageRangeIndex: RPStatsMessageIndexTotalTimeDays];
-    _totalApTimeHours = [self numberForMessageRangeIndex: RPStatsMessageIndexTotalTimeHours];
-    _totalApTimeMins = [self numberForMessageRangeIndex: RPStatsMessageIndexTotalTimeMins];
-    _totalApTimeSecs = [self numberForMessageRangeIndex: RPStatsMessageIndexTotalTimeSecs];
+    _totalNumberOfAps = [self numberForTotalApStat];
+    _totalApTimeDays = [self numberFromMessage: RPStatsMessageTotalTimeIndex timeStat: RPStatsMessageTimeComponentIndexDays];
+    _totalApTimeHours = [self numberFromMessage: RPStatsMessageTotalTimeIndex timeStat: RPStatsMessageTimeComponentIndexHours];
+    _totalApTimeMins = [self numberFromMessage: RPStatsMessageTotalTimeIndex timeStat: RPStatsMessageTimeComponentIndexMins];
+    _totalApTimeSecs = [self numberFromMessage: RPStatsMessageTotalTimeIndex timeStat: RPStatsMessageTimeComponentIndexSecs];
     
     //Write the current AP time values if there are any
-    if (self.messageNumberRanges.count > 5)
+    if (self.messageNumberRanges.count >= 3)
     {
-        _currentApTimeHours = [self numberForMessageRangeIndex: RPStatsMessageIndexCurrentTimeHours];
-        _currentApTimeMins = [self numberForMessageRangeIndex: RPStatsMessageIndexCurrentTimeMins];
-        _currentApTimeSecs = [self numberForMessageRangeIndex: RPStatsMessageIndexCurrentTimeSecs];
+        _currentApTimeHours = [self numberFromMessage: RPStatsMessageCurrentTimeIndex timeStat: RPStatsMessageTimeComponentIndexHours];
+        _currentApTimeMins = [self numberFromMessage: RPStatsMessageCurrentTimeIndex timeStat: RPStatsMessageTimeComponentIndexMins];
+        _currentApTimeSecs = [self numberFromMessage: RPStatsMessageCurrentTimeIndex timeStat: RPStatsMessageTimeComponentIndexSecs];
     }
     
     return error;
 }
 
-#pragma mark - Helpers
-//Gets a number from the message for a message number range index
-- (NSNumber *)numberForMessageRangeIndex: (RPStatsMessageIndex)index
+//Initialize the parser with all zero values
+- (void)initWithZeros
 {
-    NSString *messageSubstring = [self.message substringWithRange: [self.messageNumberRanges[index] rangeValue]];
+    _totalNumberOfAps = @0;
+    _totalApTimeDays = @0;
+    _totalApTimeHours = @0;
+    _totalApTimeMins = @0;
+    _totalApTimeSecs = @0;
+}
+
+#pragma mark - Helpers
+//The number of total APs pulled from the parsed message
+- (NSNumber *)numberForTotalApStat
+{
+    NSString *messageSubstring = [self.message substringWithRange: [self.messageNumberRanges[RPStatsMessageTotalIndex] rangeValue]];
     return [self numberFromString: messageSubstring];
+}
+
+//A number from one of the time components of the parsed message
+- (NSNumber *)numberFromMessage: (RPStatsMessageIndex)messageIndex timeStat: (RPStatsMessageTimeComponentIndex)timeComponent
+{
+    NSString *messageSubstring = [self.message substringWithRange: [self.messageNumberRanges[messageIndex] rangeValue]];
+    NSMutableArray *totalTimeComponents = [[messageSubstring componentsSeparatedByString: @":"] mutableCopy];
+    if (totalTimeComponents.count == 3) [totalTimeComponents insertObject: @"0" atIndex: RPStatsMessageTimeComponentIndexDays];
+    NSString *totalTimeStatString = totalTimeComponents[timeComponent];
+    return [self numberFromString: totalTimeStatString];
 }
 
 //Converts a string into a number
