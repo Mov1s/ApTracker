@@ -11,6 +11,7 @@
 #import "RPStats.h"
 #import "RPTrackingManager.h"
 #import "RPViewController.h"
+#import "RPViewVisibibiltyController.h"
 #import "UIView+AnimationHelper.h"
 
 @interface RPViewController ()
@@ -18,11 +19,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *totalApLabel;
 @property (weak, nonatomic) IBOutlet UILabel *totalTimeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *currentApTimeLabel;
-@property (weak, nonatomic) IBOutlet UIView *statsContainerView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
-@property (weak, nonatomic) IBOutlet UIView *currentApTimeContainer;
 @property (weak, nonatomic) IBOutlet UILabel *currentApNoneLabel;
 @property (weak, nonatomic) IBOutlet UIButton *trackButton;
+@property (strong, nonatomic) IBOutlet RPViewVisibibiltyController *currentApTimeVisibilityController;
+@property (strong, nonatomic) IBOutlet RPViewVisibibiltyController *refreshActivityIndicatorVisibilityController;
 
 //Properties
 @property (strong, nonatomic) NSDate *apStartDate;
@@ -59,17 +60,17 @@
     NSTimeInterval totalTimeInterval = [statsObject.totalTime doubleValue];
     NSString *totalTimeString = [self timeStringInDaysFromTimeInterval: totalTimeInterval];
     self.totalTimeLabel.text = [NSString stringWithFormat: @"%@ days", totalTimeString];
-
+    
     //If the user is currently drinking an ap start the current timer
     if (statsObject.isCurrentlyDrinking)
     {
         NSTimeInterval timeDrinkingCurrentAp = [statsObject.currentTime doubleValue];
         [self startApTimerWithTimeInterval: timeDrinkingCurrentAp];
     }
-    [self shouldShowCurrentApTimer: statsObject.isCurrentlyDrinking];
+    self.currentApTimeVisibilityController.shouldShowView = statsObject.isCurrentlyDrinking;
     
     //Fade the activity spinner out and replace it with the stats labels
-    [self shouldShowLoadingIndicator: NO];
+    [self.refreshActivityIndicatorVisibilityController hideView];
 }
 
 #pragma mark - Actions
@@ -120,36 +121,6 @@
     int mins = fmod(timeInterval, 3600) / 60;
     int secs = fmod(timeInterval, 60);
     return [NSString stringWithFormat: @"%02d:%02d:%02d", hours, mins, secs];
-}
-
-//Show or hide the stats or loading spinner
-//Passing in YES will show the loading spinner and hide the stats screen
-//Passing in NO will hide the loading spinner and show the stats screen
-- (void)shouldShowLoadingIndicator: (BOOL)shouldShow
-{
-    //Determine which views to show and which to hide
-    UIView *viewToShow = shouldShow ? self.loadingActivityIndicator : self.statsContainerView;
-    UIView *viewToHide = shouldShow ? self.statsContainerView : self.loadingActivityIndicator;
-    
-    //Fade one view out and another in
-    [viewToHide fadeOutWithCompletion: ^(BOOL finished) {
-        [viewToShow fadeIn];
-    }];
-}
-
-//Show or hide the current ap timer
-//Passing in YES will show the current timer and hide the "no timer" label
-//Passing in NO will show the "no timer" label and hide the current ap timer
-- (void)shouldShowCurrentApTimer: (BOOL)shouldShow
-{
-    //Determine which views to show and which to hide
-    UIView *viewToShow = shouldShow ? self.currentApTimeContainer : self.currentApNoneLabel;
-    UIView *viewToHide = shouldShow ? self.currentApNoneLabel : self.currentApTimeContainer;
-    
-    //Fade one view out and another in
-    [viewToHide fadeOutWithCompletion: ^(BOOL finished) {
-        [viewToShow fadeIn];
-    }];
 }
 
 @end
