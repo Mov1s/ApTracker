@@ -20,14 +20,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *totalTimeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *currentApTimeLabel;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingActivityIndicator;
-@property (weak, nonatomic) IBOutlet UILabel *currentApNoneLabel;
 @property (weak, nonatomic) IBOutlet UIButton *trackButton;
 @property (strong, nonatomic) IBOutlet RPViewVisibibiltyController *currentApTimeVisibilityController;
 @property (strong, nonatomic) IBOutlet RPViewVisibibiltyController *refreshActivityIndicatorVisibilityController;
+@property (strong, nonatomic) IBOutlet RPStopwatchTimer *currentApTimer;
 
-//Properties
-@property (strong, nonatomic) NSDate *apStartDate;
-@property (strong, nonatomic) NSTimer *apDrinkTimer;
 @end
 
 @implementation RPViewController
@@ -65,12 +62,20 @@
     if (statsObject.isCurrentlyDrinking)
     {
         NSTimeInterval timeDrinkingCurrentAp = [statsObject.currentTime doubleValue];
-        [self startApTimerWithTimeInterval: timeDrinkingCurrentAp];
+        [self.currentApTimer startFromElapsedTime: timeDrinkingCurrentAp];
     }
     self.currentApTimeVisibilityController.shouldShowView = statsObject.isCurrentlyDrinking;
     
     //Fade the activity spinner out and replace it with the stats labels
     [self.refreshActivityIndicatorVisibilityController hideView];
+}
+
+#pragma mark - Timer Delegate Methods
+//Gets called every second when the drink timer is active
+//Updates the now drinking label
+- (void)stopwatchTimer: (RPStopwatchTimer *)timer hasHadTimeElapse: (NSTimeInterval)timeElapsed
+{
+    self.currentApTimeLabel.text = [self timeStringInHoursFromTimeInterval: timeElapsed];
 }
 
 #pragma mark - Actions
@@ -79,26 +84,6 @@
 - (IBAction)settingsAction: (UIBarButtonItem *)sender
 {
     [self.navigationController popViewControllerAnimated: YES];
-}
-
-#pragma mark - Timer Helpers
-//Starts a timer to keep track of current run time of an AP
-- (void)startApTimerWithTimeInterval: (NSTimeInterval)timeInterval
-{
-    //Calculate and save the start date of the AP based on how long the user has been drinking it
-    self.apStartDate = [NSDate dateWithTimeIntervalSinceNow: -timeInterval];;
-    
-    //Start the timer to update every second
-    self.apDrinkTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(timerCallback:) userInfo: nil repeats: YES];
-    [self timerCallback: self.apDrinkTimer];
-}
-
-//Gets called every second when the drink timer is active
-//Updates the now drinking label
-- (void)timerCallback: (NSTimer *)timer
-{
-    NSTimeInterval interval = -[self.apStartDate timeIntervalSinceNow];
-    self.currentApTimeLabel.text = [self timeStringInHoursFromTimeInterval: interval];
 }
 
 #pragma mark - Helpers

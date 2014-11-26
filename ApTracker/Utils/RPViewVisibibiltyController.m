@@ -11,6 +11,8 @@
 
 @implementation RPViewVisibibiltyController
 
+//Toggle if the primary view should be shown or hidden
+//Changing this value will result in the view fading in or out
 - (void)setShouldShowView: (BOOL)shouldShow
 {
     _shouldShowView = shouldShow;
@@ -25,11 +27,15 @@
     }];
 }
 
+//Show the primary view
+//This will result in the view fading in
 - (void)showView
 {
     self.shouldShowView = YES;
 }
 
+//Hide the primary view
+//This will result in the view fading out
 - (void)hideView
 {
     self.shouldShowView = NO;

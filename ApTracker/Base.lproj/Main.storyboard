@@ -282,9 +282,9 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="currentApNoneLabel" destination="7P2-r4-zCA" id="zNN-vB-WBO"/>
                         <outlet property="currentApTimeLabel" destination="X7E-CG-Nv2" id="vc9-E2-RhE"/>
                         <outlet property="currentApTimeVisibilityController" destination="pru-5Y-mJp" id="RVa-Bf-BY4"/>
+                        <outlet property="currentApTimer" destination="2RR-eX-6nz" id="g75-pd-Ozr"/>
                         <outlet property="loadingActivityIndicator" destination="SdK-2H-PxS" id="Zih-aV-43V"/>
                         <outlet property="refreshActivityIndicatorVisibilityController" destination="UY7-fw-zW8" id="So5-fo-1dH"/>
                         <outlet property="totalApLabel" destination="mSN-Tr-Z5Q" id="mcS-ht-oYm"/>
@@ -297,6 +297,11 @@
                     <connections>
                         <outlet property="mutuallyExclusiveView" destination="7P2-r4-zCA" id="kS6-BF-lmO"/>
                         <outlet property="view" destination="cVQ-2r-62I" id="QBl-0X-RqA"/>
+                    </connections>
+                </customObject>
+                <customObject id="2RR-eX-6nz" userLabel="CurrentApTimer" customClass="RPStopwatchTimer">
+                    <connections>
+                        <outlet property="delegate" destination="mqM-aw-H74" id="OzT-Fs-1x3"/>
                     </connections>
                 </customObject>
                 <customObject id="UY7-fw-zW8" userLabel="RefreshActivityIndicatorVisibilityController" customClass="RPViewVisibibiltyController">

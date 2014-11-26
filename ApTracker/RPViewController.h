@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RPStopwatchTimer.h"
 
-@interface RPViewController : UIViewController
+@interface RPViewController : UIViewController <RPStopwatchTimerDelegate>
 
 @end
