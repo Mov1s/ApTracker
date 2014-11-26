@@ -88,6 +88,11 @@
                                                     <constraint firstItem="X7E-CG-Nv2" firstAttribute="top" secondItem="cVQ-2r-62I" secondAttribute="top" id="u2c-FC-71a"/>
                                                     <constraint firstAttribute="bottom" secondItem="rrQ-0q-gVp" secondAttribute="bottom" id="z8e-cC-bp1"/>
                                                 </constraints>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="alpha">
+                                                        <integer key="value" value="0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gtC-Od-fk8">
                                                 <rect key="frame" x="8" y="10" width="95" height="21"/>
@@ -247,6 +252,11 @@
                                     <constraint firstItem="TDK-tx-rVb" firstAttribute="leading" secondItem="C0d-4O-YmJ" secondAttribute="leading" id="i67-wp-jh4"/>
                                     <constraint firstItem="Uul-wb-JXT" firstAttribute="leading" secondItem="C0d-4O-YmJ" secondAttribute="leading" id="iKG-oh-1vS"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="alpha">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="SdK-2H-PxS">
                                 <rect key="frame" x="142" y="266" width="37" height="37"/>
@@ -272,17 +282,34 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="currentApNoneLabel" destination="7P2-r4-zCA" id="zNN-vB-WBO"/>
-                        <outlet property="currentApTimeContainer" destination="cVQ-2r-62I" id="qYX-ts-5tf"/>
                         <outlet property="currentApTimeLabel" destination="X7E-CG-Nv2" id="vc9-E2-RhE"/>
-                        <outlet property="loadingActivityIndicator" destination="SdK-2H-PxS" id="ysx-rG-M2K"/>
-                        <outlet property="statsContainerView" destination="C0d-4O-YmJ" id="F0v-3C-Qnz"/>
+                        <outlet property="currentApTimeVisibilityController" destination="pru-5Y-mJp" id="RVa-Bf-BY4"/>
+                        <outlet property="currentApTimer" destination="2RR-eX-6nz" id="g75-pd-Ozr"/>
+                        <outlet property="loadingActivityIndicator" destination="SdK-2H-PxS" id="Zih-aV-43V"/>
+                        <outlet property="refreshActivityIndicatorVisibilityController" destination="UY7-fw-zW8" id="So5-fo-1dH"/>
                         <outlet property="totalApLabel" destination="mSN-Tr-Z5Q" id="mcS-ht-oYm"/>
                         <outlet property="totalTimeLabel" destination="rAG-uh-Y2v" id="qm9-YY-QGs"/>
                         <outlet property="trackButton" destination="xb6-Bj-mHF" id="u5L-mE-rfJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vbW-rE-UGj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <customObject id="pru-5Y-mJp" userLabel="CurrentApTimeVisibilityController" customClass="RPViewVisibibiltyController">
+                    <connections>
+                        <outlet property="mutuallyExclusiveView" destination="7P2-r4-zCA" id="kS6-BF-lmO"/>
+                        <outlet property="view" destination="cVQ-2r-62I" id="QBl-0X-RqA"/>
+                    </connections>
+                </customObject>
+                <customObject id="2RR-eX-6nz" userLabel="CurrentApTimer" customClass="RPStopwatchTimer">
+                    <connections>
+                        <outlet property="delegate" destination="mqM-aw-H74" id="OzT-Fs-1x3"/>
+                    </connections>
+                </customObject>
+                <customObject id="UY7-fw-zW8" userLabel="RefreshActivityIndicatorVisibilityController" customClass="RPViewVisibibiltyController">
+                    <connections>
+                        <outlet property="mutuallyExclusiveView" destination="C0d-4O-YmJ" id="ebR-6u-yhv"/>
+                        <outlet property="view" destination="SdK-2H-PxS" id="mUd-Kp-QYW"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="584" y="114"/>
         </scene>
