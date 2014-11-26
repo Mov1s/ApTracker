@@ -45,7 +45,7 @@ static RPTrackingManager *trackingManagerSharedInstance = nil;
 
 #pragma mark - API Requests
 //Get AP stats
-- (void)getStatsWithCallback: (SEL)callback sender: (id)sender;
+- (void)getStatsWithCallback: (SEL)callback sender: (id)sender
 {
     //Construct URI
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -75,6 +75,52 @@ static RPTrackingManager *trackingManagerSharedInstance = nil;
                         //Everything was fine, return the stats object
                         else
                             [sender performSelector: callback withObject: stats withObject: nil];
+                        
+                    } failure: ^(AFHTTPRequestOperation *operation, NSError *error) {
+                        [sender performSelector: callback withObject: nil withObject: error];
+                    }];
+}
+
+//Start drinking an AP
+- (void)startApWithCallback: (SEL)callback sender: (id)sender
+{
+    //Construct URI
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *baseUrl = [defaults objectForKey: kRPSettingsHostKey];
+    NSString *port = [defaults objectForKey: kRPSettingsPortKey];
+    NSString *user = [defaults objectForKey: kRPSettingsNickKey];
+    NSString *path = [NSString stringWithFormat: @"%@:%@/%@/%@", baseUrl, port, @"start", user];
+    
+    //Request
+    [self.sharedManager GET: path
+                 parameters: nil
+                    success: ^(AFHTTPRequestOperation *operation, id responseObject) {
+                        
+                        //Make the stats request
+                        [self getStatsWithCallback: callback sender: sender];
+                        
+                    } failure: ^(AFHTTPRequestOperation *operation, NSError *error) {
+                        [sender performSelector: callback withObject: nil withObject: error];
+                    }];
+}
+
+//Stop drinking an AP
+- (void)stopApWithCallback: (SEL)callback sender: (id)sender
+{
+    //Construct URI
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *baseUrl = [defaults objectForKey: kRPSettingsHostKey];
+    NSString *port = [defaults objectForKey: kRPSettingsPortKey];
+    NSString *user = [defaults objectForKey: kRPSettingsNickKey];
+    NSString *path = [NSString stringWithFormat: @"%@:%@/%@/%@", baseUrl, port, @"stop", user];
+    
+    //Request
+    [self.sharedManager GET: path
+                 parameters: nil
+                    success: ^(AFHTTPRequestOperation *operation, id responseObject) {
+                        
+                        //Make the stats request
+                        [self getStatsWithCallback: callback sender: sender];
                         
                     } failure: ^(AFHTTPRequestOperation *operation, NSError *error) {
                         [sender performSelector: callback withObject: nil withObject: error];
