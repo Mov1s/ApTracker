@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Ryan Popa. All rights reserved.
 //
 
+#import "NSError+AlertHelper.h"
 #import "RPSettingsViewController.h"
 #import "RPStats.h"
 #import "RPTrackingManager.h"
@@ -36,66 +37,39 @@
     
     //Attempt to get user stats
     [[RPTrackingManager sharedInstance] getStatsWithCallback: @selector(getStatsCallbackSuccess:withError:) sender: self];
-    
-    //Hide the back button
-    self.navigationItem.hidesBackButton = YES;
-    
-    //Start the stats container hidden
-    self.statsContainerView.alpha = 0.0;
-    
-    //Start the current AP time hidden
-    self.currentApTimeContainer.alpha = 0.0;
 }
 
 #pragma mark - Callbacks
 //Callback for stats
 //Populates the labels with AP stats
-- (void)getStatsCallbackSuccess: (id)statsObject withError: (NSError *)error
+- (void)getStatsCallbackSuccess: (RPStats *)statsObject withError: (NSError *)error
 {
-    //If there was no error update the stats labels
-    if (!error)
+    //If there was an error show message
+    if (error)
     {
-        RPStats *stats = statsObject;
-        
-        //Populate the labels with the user's AP stats
-        self.totalApLabel.text = [stats.totalCount stringValue];
-        
-        //Populate the total time label
-        NSTimeInterval totalTimeInterval = [stats.totalTime doubleValue];
-        NSString *totalTimeString = [self timeStringInDaysFromTimeInterval: totalTimeInterval];
-        self.totalTimeLabel.text = [NSString stringWithFormat: @"%@ days", totalTimeString];
-
-        //If the user is currently drinking an ap start the current timer
-        if (stats.isCurrentlyDrinking)
-        {
-            NSDate *apStartTime = [self apTimerStartDateFromTimeInterval: [stats.currentTime doubleValue]];
-            [self startApTimerWithStartDate: apStartTime];
-            
-            //Fade out the message and fade in the current AP time
-            [self.currentApNoneLabel fadeOutWithCompletion:^(BOOL finished) {
-                [self.currentApTimeContainer fadeIn];
-            }];
-        }
-        else
-        {
-            //Fade out the current time and fade in the no ap message
-            [self.currentApTimeContainer fadeOutWithCompletion:^(BOOL finished) {
-                [self.currentApNoneLabel fadeIn];
-            }];
-        }
-        
-        //Fade the activity spinner out and replace it with the stats labels
-        [self.loadingActivityIndicator fadeOutWithCompletion: ^(BOOL finished) {
-            [self.statsContainerView fadeIn];
-        }];
+        [error showAlert];
+        [self.loadingActivityIndicator fadeOut];
+        return;
     }
     
-    //If there was an error show message
-    else
+    //Populate the labels with the user's AP stats
+    self.totalApLabel.text = [statsObject.totalCount stringValue];
+    
+    //Populate the total time label
+    NSTimeInterval totalTimeInterval = [statsObject.totalTime doubleValue];
+    NSString *totalTimeString = [self timeStringInDaysFromTimeInterval: totalTimeInterval];
+    self.totalTimeLabel.text = [NSString stringWithFormat: @"%@ days", totalTimeString];
+
+    //If the user is currently drinking an ap start the current timer
+    if (statsObject.isCurrentlyDrinking)
     {
-        [self displayAlertFromError: error];
-        [self.loadingActivityIndicator fadeOut];
+        NSTimeInterval timeDrinkingCurrentAp = [statsObject.currentTime doubleValue];
+        [self startApTimerWithTimeInterval: timeDrinkingCurrentAp];
     }
+    [self shouldShowCurrentApTimer: statsObject.isCurrentlyDrinking];
+    
+    //Fade the activity spinner out and replace it with the stats labels
+    [self shouldShowLoadingIndicator: NO];
 }
 
 #pragma mark - Actions
@@ -107,20 +81,13 @@
 }
 
 #pragma mark - Timer Helpers
-//Create a date representing the time an AP was started based on how long it has been in progress
-//Pass in the hours, minutes and seconds that it has been in progress and it calculates when it began
-- (NSDate *)apTimerStartDateFromTimeInterval: (NSTimeInterval)timeInterval
-{
-    return [NSDate dateWithTimeIntervalSinceNow: -timeInterval];
-}
-
 //Starts a timer to keep track of current run time of an AP
-- (void)startApTimerWithStartDate: (NSDate *)startDate
+- (void)startApTimerWithTimeInterval: (NSTimeInterval)timeInterval
 {
-    //Save start date
-    self.apStartDate = startDate;
+    //Calculate and save the start date of the AP based on how long the user has been drinking it
+    self.apStartDate = [NSDate dateWithTimeIntervalSinceNow: -timeInterval];;
     
-    //Start the timer
+    //Start the timer to update every second
     self.apDrinkTimer = [NSTimer scheduledTimerWithTimeInterval: 1.0 target: self selector: @selector(timerCallback:) userInfo: nil repeats: YES];
     [self timerCallback: self.apDrinkTimer];
 }
@@ -134,15 +101,19 @@
 }
 
 #pragma mark - Helpers
-
+//A time string in the format days:hours:mins from a timeinterval in seconds
 - (NSString *)timeStringInDaysFromTimeInterval: (NSTimeInterval)timeInterval
 {
+    //Get individual time values
     int days = timeInterval / 86400;
     int hours = fmod(timeInterval, 86400) / 3600;
     int mins = fmod(timeInterval, 3600) / 60;
+    
+    //Create formated string
     return [NSString stringWithFormat: @"%02d:%02d:%02d", days, hours, mins];
 }
 
+//A time string in the format hours:mins:secs from a timeinterval in seconds
 - (NSString *)timeStringInHoursFromTimeInterval: (NSTimeInterval)timeInterval
 {
     int hours = timeInterval / 3600;
@@ -151,12 +122,34 @@
     return [NSString stringWithFormat: @"%02d:%02d:%02d", hours, mins, secs];
 }
 
-//Shows an error message alert
-- (void)displayAlertFromError: (NSError *)error
+//Show or hide the stats or loading spinner
+//Passing in YES will show the loading spinner and hide the stats screen
+//Passing in NO will hide the loading spinner and show the stats screen
+- (void)shouldShowLoadingIndicator: (BOOL)shouldShow
 {
-    NSString *errorMessage = error.userInfo[NSLocalizedDescriptionKey];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: nil message: errorMessage delegate: nil cancelButtonTitle: @"Ok" otherButtonTitles: nil];
-    [alert show];
+    //Determine which views to show and which to hide
+    UIView *viewToShow = shouldShow ? self.loadingActivityIndicator : self.statsContainerView;
+    UIView *viewToHide = shouldShow ? self.statsContainerView : self.loadingActivityIndicator;
+    
+    //Fade one view out and another in
+    [viewToHide fadeOutWithCompletion: ^(BOOL finished) {
+        [viewToShow fadeIn];
+    }];
+}
+
+//Show or hide the current ap timer
+//Passing in YES will show the current timer and hide the "no timer" label
+//Passing in NO will show the "no timer" label and hide the current ap timer
+- (void)shouldShowCurrentApTimer: (BOOL)shouldShow
+{
+    //Determine which views to show and which to hide
+    UIView *viewToShow = shouldShow ? self.currentApTimeContainer : self.currentApNoneLabel;
+    UIView *viewToHide = shouldShow ? self.currentApNoneLabel : self.currentApTimeContainer;
+    
+    //Fade one view out and another in
+    [viewToHide fadeOutWithCompletion: ^(BOOL finished) {
+        [viewToShow fadeIn];
+    }];
 }
 
 @end

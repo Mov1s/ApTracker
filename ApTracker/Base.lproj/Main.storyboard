@@ -88,6 +88,11 @@
                                                     <constraint firstItem="X7E-CG-Nv2" firstAttribute="top" secondItem="cVQ-2r-62I" secondAttribute="top" id="u2c-FC-71a"/>
                                                     <constraint firstAttribute="bottom" secondItem="rrQ-0q-gVp" secondAttribute="bottom" id="z8e-cC-bp1"/>
                                                 </constraints>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="alpha">
+                                                        <integer key="value" value="0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gtC-Od-fk8">
                                                 <rect key="frame" x="8" y="10" width="95" height="21"/>
@@ -247,6 +252,11 @@
                                     <constraint firstItem="TDK-tx-rVb" firstAttribute="leading" secondItem="C0d-4O-YmJ" secondAttribute="leading" id="i67-wp-jh4"/>
                                     <constraint firstItem="Uul-wb-JXT" firstAttribute="leading" secondItem="C0d-4O-YmJ" secondAttribute="leading" id="iKG-oh-1vS"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="alpha">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="SdK-2H-PxS">
                                 <rect key="frame" x="142" y="266" width="37" height="37"/>
